@@ -70,9 +70,11 @@ def download(link, fname, **passedArgs):
                 subprocess.run(['ffmpeg', '-i', tempName, '%s' % (fname,)])
             except:
                 print("Please install FFMPEG")
+                return False
             os.remove(tempName)
         else:
             os.rename(tempName, fname)
+            return True
 
 matching_urls = [
     {

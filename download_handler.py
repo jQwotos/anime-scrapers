@@ -18,10 +18,10 @@ class DownloadHandler(ModuleSearch):
         logging.info("Trying to resolve '%s'" % (data['epNum']))
         for module in self.modules:
             for source in data['sources']:
+                logging.info("Trying to resolve '%s' source." % (source['link']))
                 if self._try_match_module(source['link'], module):
                     logging.info("Found a matching module for '%s'." % (source,))
                     fileName = "%s.mp4" % (data['epNum'],) if 'epNum' in data else source
-                    module.download(source['link'], fileName)
-                    break
+                    if module.download(source['link'], fileName): break
 
 download_handler = DownloadHandler()

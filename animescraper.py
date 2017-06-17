@@ -1,6 +1,7 @@
 import argparse
 import os
 import logging
+import glob
 
 import download_handler
 from scraper_handler import scraper_handler
@@ -25,12 +26,21 @@ def _multi_download(data):
     logging.info("Starting a multi download")
     [_single_download(x) for x in data['episodes']]
 
+def _remove_temps(files):
+    for x in files: os.remove(x)
+
+def _remove_previous(data, alreadyDownloaded):
+    return [x for x in data if x['epNum'] not in alreadyDownloaded]
+
 def _managed_download(data):
     title = data['title']
     if not os.path.exists(title):
-        logging.info("Folder for '' not found. Auto creating..." % (title,))
+        logging.info("Folder for '%s' not found. Auto creating..." % (title,))
         os.makedirs(title)
     os.chdir(title)
+    _remove_temps(glob.glob("*.tmp"))
+    # _remote_previous
+
     _multi_download(data)
 
 def _try_directory(directory):
@@ -47,6 +57,8 @@ def main(args):
     if args['directory']: _try_directory(args['directory'])
 
     data = scraper_handler.resolve(args['link'])
+    logging.info("Finished scraping for data, recieved ")
+    logging.info(data)
 
     if 'episodes' in data:
         # if args['managed']: _managed_download(data) else _multi_download(data)

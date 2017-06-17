@@ -52,7 +52,9 @@ def _scrape_show_id(link):
     return re.findall(showid_pat, link)[0]
 
 def _scrape_single_video_source(data):
-    combined = '%s%s%s' % (data['host']['embed_prefix'], data['embed_id'], data['host']['embed_suffix'])
+    combined = '%s%s' % (data['host']['embed_prefix'], data['embed_id'])
+    if data['host']['embed_suffix'] is not None:
+        combined = "%s%s" % (combined, data['host']['embed_suffix'])
     return {
         'link': combined,
         'type': '',
