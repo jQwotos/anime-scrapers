@@ -2,5 +2,5 @@ bs4
 cfscrape
 requests
 furl
-htnl5lib
+html5lib
 lxml
