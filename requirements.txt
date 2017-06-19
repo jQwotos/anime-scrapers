@@ -4,3 +4,4 @@ requests
 furl
 html5lib
 lxml
+demjson

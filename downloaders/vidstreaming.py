@@ -29,7 +29,6 @@ def resolve(link):
     for section in internal_matching_urls:
         if _try_match_module_section(link, section):
             logging.info("Found a match for %s" % (link,))
-            print(link)
             return section['function'](link)
     return None
 
@@ -74,6 +73,7 @@ def _scrape_video_sources_id(id):
 
 def _scrape_video_sources(link):
     id = furl(link).args['id']
+    logging.info("Found id %s from '%s'" % (id, link,))
     return _scrape_video_sources_id(id)
 
 matching_urls = [
