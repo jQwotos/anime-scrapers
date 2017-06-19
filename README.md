@@ -6,11 +6,12 @@ Anime scrapers is a collection of scrapers that have been all unified.
 - [Index](#Index)
 - [Functions](#Functions)
 - [Contributing](#Contributing)
-    - [URL Handling (matching_urls)]
+    - [URL Handling (matching_urls)](#URLHandling)
+- [Credits](#Credits)
 ## Usage
-```python3 animescraper.py [link]```
-
-Or you can use the handlers to use the different functions.
+```
+python3 animescraper.py [link]
+```
 
 ### Functions
 There are three primary function calls in the scrapers
@@ -137,6 +138,6 @@ Info collectors should also have the following variables
 
 - Put them in the `info_collectors` folder
 
-# Credits
+## Credits
 - jQwotos
 - FadedCoder
