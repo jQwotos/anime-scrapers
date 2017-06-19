@@ -76,6 +76,24 @@ def _scrape_video_sources(link):
     logging.info("Found id %s from '%s'" % (id, link,))
     return _scrape_video_sources_id(id)
 
+def _parse_list_embed_single(data):
+    return {
+        'link': data['src'],
+        'type': 'mp4',
+        'quality': data['label'],
+    }
+
+def _parse_list_embed_multi(data):
+    sources = data.findAll("source", {"type": "video/mp4"})
+    return [_parse_list_embed_single(x) for x in sources]
+
+
+def _scrape_video_embed(link):
+    data = BeautifulSoup(requests.get(link).content, 'html.parser')
+    return {
+        'sources': _parse_list_embed_multi(data),
+    }
+
 matching_urls = [
     {
         'urls': [
@@ -88,10 +106,16 @@ matching_urls = [
 
 internal_matching_urls = [
     {
-        'urls': [r'https://vidstream.co/download\?id=(.*)',
-                r'https://vidstream.co/embed.php\?(.*)',
-                r'https://vidstreaming.io/embed.php\?id=(.*)',
+        'urls': [
+            r'https://vidstream.co/download\?id=(.*)',
                 ],
         'function': _scrape_video_sources,
     },
+    {
+        'urls': [
+            r'https://vidstream.co/embed.php\?(.*)',
+            r'https://vidstreaming.io/embed.php\?id=(.*)',
+        ],
+        'function': _scrape_video_embed,
+    }
 ]
