@@ -100,7 +100,8 @@ def _scrape_released(data):
     return data.findAll('p', {'class': 'type'})[3].text.replace('Released: ', '')
 
 def _scrape_epNum(url):
-    return re.findall(epnum_pat, url)[0]
+    epNum = re.findall(epnum_pat, url)
+    return epNum[0] if len(epNum) > 0 else '0'
 
 def _scrape_single_video_source(data):
     return {
@@ -135,11 +136,11 @@ def scrape_all_show_sources(link):
 
 matching_urls = [
     {
-        'urls': [r'https://ww1.gogoanime.io/category/(.*)'],
+        'urls': [r'https://ww[0-9]+.gogoanime.io/category/(.*)'],
         'function': scrape_all_show_sources,
     },
     {
-        'urls': [r'https://ww1.gogoanime.io//search.html?keyword=(.*)'],
+        'urls': [r'https://ww[0-9]+.gogoanime.io//search.html?keyword=(.*)'],
         'function': search,
     },
     {
