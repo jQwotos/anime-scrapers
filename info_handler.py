@@ -21,3 +21,6 @@ class InfoHandler(ModuleSearch):
 
     def getDetailedInfo(self, id):
         return [self._details_module(id, x) for x in self.modules]
+
+
+info_handler = InfoHandler()
