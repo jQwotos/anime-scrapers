@@ -39,6 +39,7 @@ def download(link, filename):
                 logging.error("Failed to a chunk for '%s'." % (link,))
     logging.info("Finished downloading '%s'." % (link,))
     os.rename(tempName, filename)
+    return True
 
 matching_urls = [
     {
