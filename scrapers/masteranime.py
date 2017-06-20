@@ -1,7 +1,11 @@
 import re
 import logging
 
-import requests
+# import requests
+# Not working, using below instead
+import cfscrape
+requests = cfscrape.create_scraper()
+
 import demjson
 
 from bs4 import BeautifulSoup
