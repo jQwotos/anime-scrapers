@@ -20,12 +20,14 @@ def _combine_link(url):
 
 def _extract_single_search(data):
     anchor = data.find("a")
-    name = anchor.find("img")['alt']
+    img = anchor.find("img")
+    name = img['alt']
     return {
         'link': _combine_link(anchor['href']),
         'title': name,
         'language': 'dub' if 'dub' in name.lower() else 'sub',
         'host': site_name,
+        'poster': _combine_link(img['src']),
     }
 
 def _extract_multiple_search(data):

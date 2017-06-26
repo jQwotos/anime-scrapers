@@ -16,6 +16,7 @@ BASE_URL = "https://www.masterani.me"
 SEARCH_URL = "%s/api/anime/search" % (BASE_URL,)
 SHOW_URL = "%s/anime/info/" % (BASE_URL,)
 EPISODE_LIST_URL = "%s/api/anime/{ID}/detailed" % (BASE_URL,)
+POSTER_URL = ("%s/poster/3/" % BASE_URL).replace("www", "cdn")
 
 showid_pat = re.compile("%s([0-9]+)-" % (SHOW_URL,))
 sources_pat = re.compile('mirrors:(.*?), auto_update: \[1')
@@ -26,6 +27,9 @@ def _combine_link(url):
 def _merge_slug(location, slug):
     return _combine_link("/anime/%s/%s" % (location, slug,))
 
+def _merge_poster(poster_url):
+    return "%s%s" % (POSTER_URL, poster_url,)
+
 def _extract_single_search(data):
     return {
         'link': _merge_slug("info", data['slug']),
@@ -33,6 +37,7 @@ def _extract_single_search(data):
         'id': data['id'],
         'language': 'sub', # masteranime only has subs
         'host': site_name,
+        'poster': _merge_poster(data['poster']['file']),
     }
 
 
