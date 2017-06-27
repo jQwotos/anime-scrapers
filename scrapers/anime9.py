@@ -1,4 +1,6 @@
 import re
+import logging
+
 import requests
 
 from bs4 import BeautifulSoup as bs
@@ -82,6 +84,7 @@ def _scrape_episode_sources(data):
     return [_scrape_episode_source(x) for x in request['data']]
 
 def _scrape_episode_info(id, ts, update):
+    logging.debug("'%s' is performing a info grab for '%s'" % (site_name, id,))
     params = {
         'id': id,
         'ts': ts,
