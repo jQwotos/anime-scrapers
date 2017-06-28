@@ -11,6 +11,7 @@ BASE_URL = 'https://9anime.to'
 SEARCH_URL = '%s/search' % (BASE_URL,)
 INFO_API_URL = "%s/ajax/episode/info" % (BASE_URL,)
 
+
 class NineAnimeUrlExtender:
     '''
 
@@ -47,6 +48,7 @@ class NineAnimeUrlExtender:
             n += ord(t[i]) if i < len(t) else 0
         return format(n, 'x')  # convert n to hex string
 
+
 def _parse_search_single(data):
     img = data.find("img")
     nameAnchor = data.find("a", {"class": "name"})
@@ -61,8 +63,13 @@ def _parse_search_single(data):
         'poster': img['src']
     }
 
+
 def _parse_search_multi(data):
-    return [_parse_search_single(x) for x in data.findAll("div", {"class": "item"})]
+    return [
+        _parse_search_single(x)
+        for x in data.findAll("div", {"class": "item"})
+    ]
+
 
 def search(query):
     params = {
@@ -72,6 +79,7 @@ def search(query):
 
     return _parse_search_multi(data)
 
+
 def _scrape_episode_source(data):
     return {
         'link': data['file'],
@@ -79,9 +87,11 @@ def _scrape_episode_source(data):
         'quality': data['label'],
     }
 
+
 def _scrape_episode_sources(data):
     request = requests.get(data['grabber'], params=data['params']).json()
     return [_scrape_episode_source(x) for x in request['data']]
+
 
 def _scrape_episode_info(id, ts, update):
     logging.debug("'%s' is performing a info grab for '%s'" % (site_name, id,))
@@ -112,9 +122,8 @@ def _parse_server_single_episode(data, ts, update):
         'epNum': anchor.text,
         'sources': _scrape_episode_info(id, ts, update),
     }
-    if output['sources'] is not None:
-        return output
-    else: return None
+    return output if output['sources'] is not None else None
+
 
 def _parse_server_episodes(data, ts, update):
     episodes = data.findAll("li")
@@ -122,23 +131,25 @@ def _parse_server_episodes(data, ts, update):
     if len(sources) > 0:
         return list(filter(None, sources))
 
+
 def _scrape_all_servers(data, ts, update):
     servers = data.findAll("div", {"class": "server row"})
     sourcedServers = [_parse_server_episodes(x, ts, update) for x in servers]
     return list(filter(None, sourcedServers))
 
+
 def format_combine_multi(unformatedOutput):
     output = []
     for ep in unformatedOutput:
         output.append({
-            'epNum': ep,
+            'epNum': str(int(ep)),  # remove leading 0s
             'sources': unformatedOutput[ep]
         })
     return output
 
+
 def combine_multi(servers):
     unformatedOutput = {}
-
     for server in servers:
         for ep in server:
             if ep['epNum'] not in unformatedOutput:
@@ -148,12 +159,16 @@ def combine_multi(servers):
 
     return format_combine_multi(unformatedOutput)
 
+
 def _scrape_title(data):
     return data.find('h1', {'class': 'title'}).text
 
+
 def scrape_all_show_sources(link):
-    logging.info("A request for '%s' was made under %s scraper." %
-        (link, site_name))
+    logging.info(
+        "A request for '%s' was made under %s scraper." %
+        (link, site_name)
+    )
     data = bs(requests.get(link).content, 'html.parser')
     body = data.find('body')
     ts = body['data-ts']

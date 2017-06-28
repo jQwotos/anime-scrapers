@@ -5,6 +5,7 @@ import logging
 
 import requests
 
+
 class Timer:
     def restart(self, request):
         self.length = int(request.headers.get('content-length'))
@@ -19,7 +20,11 @@ class Timer:
         self.current += chunk_size
         speed = round(self.current // (time.clock() - self.start) / 1000000, 2)
         percentComplete = round((self.current / self.length) * 100, 1)
-        sys.stdout.write("\r %s Mbps | %r Percent Complete" % (speed, percentComplete))
+        sys.stdout.write(
+            "\r %s Mbps | %r Percent Complete"
+            % (speed, percentComplete)
+        )
+
 
 def download(link, filename):
     logging.info("Starting download for %s." % (link,))
