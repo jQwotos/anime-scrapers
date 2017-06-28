@@ -71,7 +71,7 @@ search(query, strict):
       'id': 'id of the show (int)',
       'titles': 'Other names of the show (str)',
     }
-  ]	
+  ]
 ```
 
 ```
@@ -141,3 +141,4 @@ Info collectors should also have the following variables
 ## Credits
 - jQwotos
 - FadedCoder
+- DxCx (NineAnimeUrlExtender)
