@@ -7,7 +7,6 @@ import re
 from difflib import SequenceMatcher
 from templates.module_search import ModuleSearch
 
-matchPercentage = .85
 
 
 class ScraperHandler(ModuleSearch):
@@ -18,17 +17,18 @@ class ScraperHandler(ModuleSearch):
         self.scrapers_location = "scrapers/"
         self.modules = glob.glob("%s*.py" % (self.scrapers_location))
         self.modules = self._load_modules()
+        print(self.modules)
 
     def _search_module(self, query, module):
         return module.search(query)
 
     # Searches using scraper modules based on query
-    def search(self, query, limited_modules=[]):
+    def search(self, query, limited_modules=None):
         logging.debug("Starting a search for '%s'." % (query,))
         return [
             self._search_module(query, x)
             for x in self.modules
-            if x.site_name in limited_modules
+            if limited_modules is None or x.site_name in limited_modules
         ]
 
     # Resolves a URL and returns data from
