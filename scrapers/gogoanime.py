@@ -19,13 +19,16 @@ released_pat = re.compile("Released: ([0-9]+)")
 
 cfscrape = cf.create_scraper()
 
+
 def _combine_link(url):
     return ("%s%s" % (BASE_URL, url,)).replace(' ', '')
+
 
 def _parse_released_date(data):
     fullString = str(data.find("p", {"class": "released"}))
     output = re.findall(released_pat, fullString)
     return output[0] if len(output) > 0 else None
+
 
 def _extract_single_search(data):
     name = data.find('p', {'class': 'name'}).find('a')
@@ -37,10 +40,11 @@ def _extract_single_search(data):
         'host': site_name,
     }
 
+
 def _extract_multiple_search(data):
     entries = data.find('ul', {'class': 'items'}).findAll("li")
-    # return list(map(lambda x: _extract_single_search(x), entries))
     return [_extract_single_search(x) for x in entries]
+
 
 def search(query):
     '''
@@ -63,6 +67,7 @@ def search(query):
 
     return _extract_multiple_search(data)
 
+
 def _parse_list_single(data):
     return {
         'name': data.find("div", {"class": "name"}).text,
@@ -71,10 +76,11 @@ def _parse_list_single(data):
         'type': 'iframe',
     }
 
+
 def _parse_list_multi(data):
     episodes = data.findAll("a")
-    # return list(map(lambda x: _parse_list_single(x), episodes))
     return [_parse_list_single(x) for x in episodes]
+
 
 def _load_list_episode(id):
     params = {
@@ -87,27 +93,35 @@ def _load_list_episode(id):
     data = BeautifulSoup(data, 'html.parser')
     return _parse_list_multi(data)
 
+
 def _scrape_show_id(data):
     return re.findall(id_pat, str(data))
+
 
 def _scrape_title(data):
     return data.find("div", {"class": "anime_info_body_bg"}).find('h1').text
 
+
 def _scrape_status(data):
     return data.findAll('p', {'class': 'type'})[4].text.replace('Status: ', '')
 
+
 def _scrape_released(data):
-    return data.findAll('p', {'class': 'type'})[3].text.replace('Released: ', '')
+    text = data.findAll('p', {'class': 'type'})[3].text
+    return text.replace('Released: ', '')
+
 
 def _scrape_epNum(url):
     epNum = re.findall(epnum_pat, url)
     return epNum[0] if len(epNum) > 0 else '0'
+
 
 def _scrape_single_video_source(data):
     return {
         'link': data['data-video'],
         'type': 'iframe'
     }
+
 
 def _scrape_video_sources(link):
     data = cfscrape.get(link).content
@@ -117,8 +131,12 @@ def _scrape_video_sources(link):
 
     return {
         'epNum': _scrape_epNum(link),
-        'sources': list(map(lambda x: _scrape_single_video_source(x), sources)),
+        'sources': list(map(
+            lambda x: _scrape_single_video_source(x),
+            sources)
+        ),
     }
+
 
 def scrape_all_show_sources(link):
     data = cfscrape.get(link).content
@@ -127,7 +145,7 @@ def scrape_all_show_sources(link):
     episodes = _load_list_episode(id)
 
     return {
-        'episodes': [_scrape_video_sources(x['link']) for x in episodes], # list(map(lambda x: _scrape_video_sources(x['link']), episodes)),
+        'episodes': [_scrape_video_sources(x['link']) for x in episodes],
         'title': _scrape_title(data),
         'status': _scrape_status(data),
         'host': 'gogoanime',
